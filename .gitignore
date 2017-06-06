@@ -1,0 +1,616 @@
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
+import java.sql.Statement;
+
+
+class AddChoice{
+	/*添加选择题*/
+	public static final String DBDRIVER="org.gjt.mm.mysql.Driver";
+	public static final String DBURL="jdbc:mysql://localhost:3306/exam";
+	public static final String DBUSER="root";
+	public static final String DBPASS="864172";
+	JFrame frame=new JFrame("添加选择题");
+	static JLabel lp=new JLabel("题目:");
+	static JLabel lA=new JLabel("A:");
+	static JLabel lB=new JLabel("B:");
+	static JLabel lC=new JLabel("C:");
+	static JLabel lD=new JLabel("D:");
+	static JLabel la=new JLabel("答案:");
+	static JTextField Problem=new JTextField(100);
+	static JTextField A=new JTextField(30);
+	static JTextField B=new JTextField(30);
+	static JTextField C=new JTextField(30);
+	static JTextField D=new JTextField(30);
+	static JComboBox Answer=null;
+	static JButton but=new JButton("添加");
+	static String sql=null;
+	public AddChoice(){
+		String answer[]={"A","B","C","D"};
+		this.Answer=new JComboBox(answer);
+		frame.setLayout(new GridLayout(7,2));
+		frame.add(AddChoice.lp);
+		frame.add(AddChoice.Problem);
+		frame.add(AddChoice.lA);
+		frame.add(AddChoice.A);
+		frame.add(AddChoice.lB);
+		frame.add(AddChoice.B);
+		frame.add(AddChoice.lC);
+		frame.add(AddChoice.C);
+		frame.add(AddChoice.lD);
+		frame.add(AddChoice.D);
+		frame.add(AddChoice.la);
+		frame.add(AddChoice.Answer);
+		frame.add(AddChoice.but);
+		frame.setVisible(true);
+		frame.setSize(450, 300);
+		frame.setLocation(300,200);
+		
+		but.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				if(arg0.getSource()==but){
+					String problem= Problem.getText(); 
+					String a=A.getText(); 
+					String b=B.getText(); 
+					String c=C.getText(); 
+					String d=D.getText(); 
+					String answer =(String)Answer.getSelectedItem();
+					sql="INSERT INTO choice(problem,A,B,C,D,answer)"+"VALUES('"+problem+"','"+a+"','"+b+"','"+c+"','"+d+"','"+answer+"')";
+					Connection conn=null;
+					Statement stmt=null;
+					try{
+						Class.forName(DBDRIVER);
+					}catch(ClassNotFoundException e){
+						e.printStackTrace();
+					}
+					try{
+						conn=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+					}catch(SQLException e){
+						e.printStackTrace();
+					}
+					try {
+						stmt=conn.createStatement();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						stmt.executeUpdate(sql);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					System.out.println(conn);
+					try{
+						conn.close();
+					}catch(SQLException e){
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+}
+
+class AddDecide{
+	/*添加判断题*/
+	public static final String DBDRIVER="org.gjt.mm.mysql.Driver";
+	public static final String DBURL="jdbc:mysql://localhost:3306/exam";
+	public static final String DBUSER="root";
+	public static final String DBPASS="864172";
+	JFrame frame=new JFrame("添加判断题");
+	static JLabel lp2=new JLabel("题目:");
+	static JLabel la2=new JLabel("答案:");
+	static JTextField Problem2=new JTextField(100);
+	static JComboBox Answer2=null;
+	static JButton but2=new JButton("添加");
+	static String sql2=null;
+	public AddDecide(){
+		String answer2[]={"对","错"};
+		this.Answer2=new JComboBox(answer2);
+		frame.setLayout(new GridLayout(7,2));
+		frame.add(AddDecide.lp2);
+		frame.add(AddDecide.Problem2);
+		frame.add(AddDecide.la2);
+		frame.add(AddDecide.Answer2);
+		frame.add(AddDecide.but2);
+		frame.setVisible(true);
+		frame.setSize(450, 300);
+		frame.setLocation(300,200);
+		but2.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				if(arg0.getSource()==but2){
+					String problem2= Problem2.getText(); 
+					String answer2 =(String)Answer2.getSelectedItem();
+					sql2="INSERT INTO decide(problem,answer)"+"VALUES('"+problem2+"','"+answer2+"')";
+					Connection conn2=null;
+					Statement stmt2=null;
+					try{
+						Class.forName(DBDRIVER);
+					}catch(ClassNotFoundException e){
+						e.printStackTrace();
+					}
+					try{
+						conn2=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+					}catch(SQLException e){
+						e.printStackTrace();
+					}
+					try {
+						stmt2=conn2.createStatement();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					try {
+						stmt2.executeUpdate(sql2);
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					System.out.println(conn2);
+					try{
+						conn2.close();
+					}catch(SQLException e){
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+}
+
+class Find{
+	/*查询题目内嵌套删除题目*/
+	public static final String DBDRIVER="org.gjt.mm.mysql.Driver";
+	public static final String DBURL="jdbc:mysql://localhost:3306/exam";
+	public static final String DBUSER="root";
+	public static final String DBPASS="864172";
+	JFrame frame=new JFrame("查找题目");
+	static JLabel findtype=new JLabel("查询题目类型:");
+	static JLabel findnum=new JLabel("查询题目题号:");
+	static JTextField findno=new JTextField(20);
+	static JButton but4=new JButton("查询");
+	static JComboBox type=null;
+	String sql4=null;
+	static String type2=null;
+	static String findn=findno.getText();
+	static String findnn=findno.getText();
+	public Find(){
+		String typ[]={"选择题","判断题"};
+		this.type=new JComboBox(typ);
+		frame.setLayout(new GridLayout(7,2));
+		frame.add(Find.findtype);
+		frame.add(Find.type);
+		frame.add(Find.findnum);
+		frame.add(Find.findno);
+		frame.add(Find.but4);
+		frame.setVisible(true);
+		frame.setSize(450, 300);
+		frame.setLocation(300,200);
+		but4.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				if(arg0.getSource()==but4){
+					String findtyp =(String)type.getSelectedItem();
+					if(findtyp.equals("选择题")){
+						type2="choice";
+					}
+					else type2="decide";
+					String findn=findno.getText();
+					Connection conn4=null;
+					Statement stmt=null;
+					ResultSet rs=null;
+					sql4="select * from "+type2+" where no= "+findn+"";
+					try {
+						Class.forName(DBDRIVER);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						conn4=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						stmt=conn4.createStatement();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						rs=stmt.executeQuery(sql4);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						while(rs.next()){
+							if(findtyp.equals("选择题")){
+								int no=rs.getInt("no");
+								String problem=rs.getString("problem");
+								String A=rs.getString("a");
+								String B=rs.getString("b");
+								String C=rs.getString("c");
+								String D=rs.getString("d");
+								String answer=rs.getString("answer");
+								JFrame Find=new JFrame("查询题目信息");
+								Find.setLayout(new GridLayout(7,1));
+								JLabel lab1=new JLabel("选择题题目"+no+":"+problem);
+								JLabel lab2=new JLabel("A:"+A);
+								JLabel lab3=new JLabel("B:"+B);
+								JLabel lab4=new JLabel("C:"+C);
+								JLabel lab5=new JLabel("D:"+D);
+								JLabel lab6=new JLabel("                   答案:"+answer);
+								JButton but=new JButton("删除此题目");
+								Find.add(lab1);
+								Find.add(lab2);
+								Find.add(lab3);
+								Find.add(lab4);
+								Find.add(lab5);
+								Find.add(lab6);
+								Find.add(but);
+								but.addActionListener(new ActionListener(){  /*嵌套删除题目*/
+									public void actionPerformed(ActionEvent arg0){
+										if(arg0.getSource()==but){
+											Connection conn=null;
+											Statement stmt=null;
+											String sql="delete from "+type2+" where no="+findn+"";
+											try {
+												Class.forName(DBDRIVER);
+											} catch (ClassNotFoundException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												conn=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												stmt=conn.createStatement();
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												stmt.executeUpdate(sql);
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												stmt.close();
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												conn.close();
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											}
+										}
+									});
+								Find.setSize(250, 180);
+								Find.setLocation(300,220);
+								Find.setVisible(true);
+							}
+							else{
+								int no=rs.getInt("no");
+								String problem=rs.getString("problem");
+								String answer=rs.getString("answer");
+								JFrame Find=new JFrame("查询题目信息");
+								Find.setLayout(new GridLayout(7,1));
+								JLabel lab1=new JLabel("判断题题目"+no+":"+problem);
+								JLabel lab2=new JLabel("                   答案:"+answer);
+								JButton but=new JButton("删除此题目");
+								Find.add(lab1);
+								Find.add(lab2);
+								Find.add(but);
+								but.addActionListener(new ActionListener(){
+									public void actionPerformed(ActionEvent arg0){
+										if(arg0.getSource()==but){
+											Connection conn=null;
+											Statement stmt=null;
+											String sql="delete from "+type2+" where no="+findn+"";
+											try {
+												Class.forName(DBDRIVER);
+											} catch (ClassNotFoundException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												conn=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												stmt=conn.createStatement();
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												stmt.executeUpdate(sql);
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												stmt.close();
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											try {
+												conn.close();
+											} catch (SQLException e) {
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											}
+										}
+									});
+								Find.setSize(250, 180);
+								Find.setLocation(300,220);
+								Find.setVisible(true);
+							}
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		});
+	}
+}
+
+class MakeUp{
+	/*生成试卷*/
+	public static final String DBDRIVER="org.gjt.mm.mysql.Driver";
+	public static final String DBURL="jdbc:mysql://localhost:3306/exam";
+	public static final String DBUSER="root";
+	public static final String DBPASS="864172";
+	JFrame frame=new JFrame("生成试卷");
+	JFrame frame2=new JFrame("试卷");
+	JTextArea exam=new JTextArea(30,20);
+	static JLabel num1=new JLabel("选择题数目:");
+	static JLabel num2=new JLabel("判断题数目:");
+	static JTextField no1=new JTextField(20);
+	static JTextField no2=new JTextField(20);
+	static JButton but3=new JButton("生成");
+	
+	public MakeUp(){
+		frame.setLayout(new GridLayout(7,2));
+		frame.add(MakeUp.num1);
+		frame.add(MakeUp.no1);
+		frame.add(MakeUp.num2);
+		frame.add(MakeUp.no2);
+		frame.add(MakeUp.but3);
+		frame.setVisible(true);
+		frame.setSize(450, 300);
+		frame.setLocation(300,200);
+		but3.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent arg0){
+				String choicenum1= no1.getText(); 
+				String decidenum1=no2.getText();
+				int choiceno=Integer.parseInt(choicenum1); 
+				int decideno=Integer.parseInt(decidenum1); 
+				int choicenumber=(int)(Math.random()*choiceno);
+				int decidenumber=(int)(Math.random()*decideno);
+				System.out.println(choicenumber);
+				System.out.println(decidenumber);
+				
+				File f=new File("d:"+File.separator+"exam.txt");
+				OutputStream out=null;
+				try {
+					out=new FileOutputStream(f,true);
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				
+				for(int i=1;i<=choiceno;i++){
+					String s=String.valueOf(i);
+					Connection conn4=null;
+					Statement stmt=null;
+					ResultSet rs=null;
+					String sql="select * from choice where no= "+s+"";
+					try {
+						Class.forName(DBDRIVER);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						conn4=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						stmt=conn4.createStatement();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						rs=stmt.executeQuery(sql);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						while(rs.next()){
+							int no=rs.getInt("no");
+							String num=String.valueOf(no);
+							String problem=rs.getString("problem");
+							String A=rs.getString("a");
+							String B=rs.getString("b");
+							String C=rs.getString("c");
+							String D=rs.getString("d");
+							String answer=rs.getString("answer");
+							String PP="\r\n"+num+":"+problem+"\r\n"+"A:"+A+"\r\n"+"B:"+B+"\r\n"+"C:"+C+"\r\n"+"D:"+D+"\r\n"+"答案:"+answer+"\r\n";
+							byte b[]=PP.getBytes();
+							for(int k=0;k<b.length;k++){
+								try {
+									out.write(b[k]);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+				for(int j=1;j<=decideno;j++){
+					String s=String.valueOf(j);
+					Connection conn4=null;
+					Statement stmt=null;
+					ResultSet rs=null;
+					String sql="select * from decide where no= "+s+"";
+					try {
+						Class.forName(DBDRIVER);
+					} catch (ClassNotFoundException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						conn4=DriverManager.getConnection(DBURL, DBUSER, DBPASS);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						stmt=conn4.createStatement();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						rs=stmt.executeQuery(sql);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					try {
+						while(rs.next()){
+							int no=rs.getInt("no");
+							String num=String.valueOf(no);
+							String problem=rs.getString("problem");
+							String answer=rs.getString("answer");
+							String PP="\r\n"+num+":"+problem+"\r\n"+answer+"\r\n";
+							byte b[]=PP.getBytes();
+							for(int k=0;k<b.length;k++){
+								try {
+									out.write(b[k]);
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
+							
+						}
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+				
+			}
+		});
+	}
+}
+
+public class S7E1Exam {
+	public static void main(String args[]){
+		JFrame frame=new JFrame("Welcome");
+		frame.setLayout(new GridLayout(7,2));
+		JMenu m1=new JMenu("选项");
+		JMenu m2=new JMenu("录入");
+		JMenu m3=new JMenu("查询");
+		JMenuBar bar=new JMenuBar();
+		JMenuItem choiceItem=new JMenuItem("选择题");
+		JMenuItem decideItem=new JMenuItem("判断题");
+		JMenuItem queryNoItem=new JMenuItem("按题号查询");
+		JMenuItem queryNameItem=new JMenuItem("按题目查询");
+		JMenuItem newItem=new JMenuItem("生成试卷");
+		m2.add(choiceItem);
+		m2.add(decideItem);
+		m3.add(queryNoItem);
+		m3.add(queryNameItem);
+		m1.add(m2);
+		m1.add(m3);
+		m1.add(newItem);
+		bar.add(m1);
+		frame.setJMenuBar(bar);
+		frame.setVisible(true);
+		frame.setSize(450, 300);
+		frame.setLocation(300,200);
+		choiceItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				new AddChoice();
+				
+			}
+		});
+		decideItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				
+				new AddDecide();
+				
+			}
+		});
+		queryNoItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+
+				new Find();
+				
+			}
+		});
+		newItem.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+
+				new MakeUp();
+				
+			}
+		});
+	}
+}
